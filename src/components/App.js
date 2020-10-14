@@ -1,3 +1,4 @@
+import Axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import Friend from './Friend'
 import FriendForm from './FriendForm'
@@ -48,12 +49,29 @@ export default function App() {
   const getFriends = () => {
     // 🔥 STEP 5- IMPLEMENT! ON SUCCESS PUT FRIENDS IN STATE
     //    helper to [GET] all friends from `http://localhost:4000/friends`
+    Axios.get('http://localhost:4000/friends')
+        .then(res => {
+          // console.log(res.data)
+          setFriends(res.data)
+        })
+        .catch(err => {
+          console.log("err", err)
+        })
   }
 
   const postNewFriend = newFriend => {
     // 🔥 STEP 6- IMPLEMENT! ON SUCCESS ADD NEWLY CREATED FRIEND TO STATE
     //    helper to [POST] `newFriend` to `http://localhost:4000/friends`
     //    and regardless of success or failure, the form should reset
+    Axios.post('http://localhost:4000/friends', newFriend)
+        .then(res => {
+          
+          setFriends([...friends, res.data])
+          console.log(friends)
+        })
+        .catch(err => {
+          console.log(err)
+        })
   }
 
   //////////////// EVENT HANDLERS ////////////////
@@ -73,9 +91,12 @@ export default function App() {
       email: formValues.email.trim(),
       role: formValues.role.trim(),
       civil: formValues.civil.trim(),
+      hobbies: ['coding', 'reading', 'hiking'].filter(hobby => formValues[hobby])
       // 🔥 STEP 7- WHAT ABOUT HOBBIES?
     }
+
     // 🔥 STEP 8- POST NEW FRIEND USING HELPER
+    postNewFriend(newFriend)
   }
 
   //////////////// SIDE EFFECTS ////////////////
